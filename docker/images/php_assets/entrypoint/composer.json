@@ -1,0 +1,14 @@
+{
+  "name": "vogaro-docker-entorypoint",
+  "require": {
+    "php": ">=5.3.0",
+    "doctrine/common": "v2.5.3",
+    "doctrine/dbal": "^2.5",
+  },
+  "autoload": {
+    "psr-4": {
+      "Util\\": "src/",
+      "Util\\Command\\" : "cmd/"
+    }
+  }
+}

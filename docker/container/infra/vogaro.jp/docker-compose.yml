@@ -1,0 +1,97 @@
+version: '2'
+
+services:
+  mysql56-3:
+    image: mysql:5.6
+    container_name: mysql56-3.db.service
+    environment:
+      MYSQL_ROOT_PASSWORD: JJCV3703
+      MYSQL_DATABASE: test1_development
+    ##データの永続化
+    volumes:
+      - ./repository/mysql5.6:/var/lib/mysql
+    networks:
+      db-manage: null
+      mysql5.6:
+        aliases:
+          - db
+    restart: always
+
+  mysql57:
+    image: mysql:5.7
+    container_name: mysql57.db.service
+    environment:
+      MYSQL_ROOT_PASSWORD: JJCV3703
+      MYSQL_DATABASE: test2_development
+    ##データの永続化
+    volumes:
+      - ./repository/mysql5.7:/var/lib/mysql
+    networks:
+      db-manage: null
+      mysql5.7:
+        aliases:
+          - db
+    restart: always
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin.db.service
+    depends_on:
+      - mysql56-3
+      - mysql57
+    environment:
+      VIRTUAL_HOST: phpmyadmin.vogaro.jp
+      LETSENCRYPT_HOST: phpmyadmin.vogaro.jp
+      LETSENCRYPT_EMAIL: engineer@vogaro.jp
+      PMA_HOSTS: mysql56-3,mysql57
+    ports:
+      - 80
+    expose:
+      - 80
+    volumes:
+      - "./phpmyadmin/sessions:/sessions"
+    networks:
+      - db-manage
+      - front
+    restart: always
+
+  nginx-proxy:
+    image: jwilder/nginx-proxy:alpine
+    container_name: proxy.web.service
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./htpasswd:/etc/nginx/htpasswd
+      - ./assets/nginx/conf.d/extend.conf:/etc/nginx/conf.d/extend.conf
+      # ssl
+      - ./ssl/certifications:/etc/nginx/certs:ro
+      - /etc/nginx/vhost.d
+      - /usr/share/nginx/html
+    networks:
+      - front
+    restart: always
+
+  letsencrypt:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    container_name: letsencrypt
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./ssl/certifications:/etc/nginx/certs:rw
+    volumes_from:
+      - nginx-proxy
+    restart: always
+
+networks:
+  db-manage:
+    external: true
+  mysql5.6:
+    external: true
+  mysql5.7:
+    external: true
+  front:
+    external: true
+
+volumes:
+  vhost:

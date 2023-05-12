@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  hogehoge.localhost:                     #subdomain
+    image: vogaro:php7.2
+    container_name: hogehoge.localhost    #subdomain
+    hostname: hogehoge.localhost          #subdomain
+    environment:
+     # nginx-proxy
+      VIRTUAL_HOST: hogehoge.localhost    #subdomain
+     # database
+      DB_NAME: hogehoge
+      DB_USER: hogehoge
+      DB_PW: fugafuga
+      DB_HOST: db
+      DB_CHARSET: UTF8
+      APP_ENV: local
+      # apache(option)
+      # DOCUMENT_ROOT: /var/www/html/test
+    env_file: .env
+    volumes:
+      - ./dist:/var/www/html
+      - ./docker/sql:/etc/entrypoint/resource/sql
+    ports:
+      - 80
+    expose:
+      - 80
+    networks:
+      - mysql5.6
+      - front
+
+networks:
+  front:
+    external: true
+  mysql5.6:
+    external: true

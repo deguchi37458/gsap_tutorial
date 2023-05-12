@@ -1,0 +1,5 @@
+#!/bin/bash
+set -e
+
+# Apacheの環境変数を読み込み、Apache2をフォアグランドで起動。これによりコンテナ起動時にApacheが常時起動になる
+source /etc/apache2/envvars && exec /usr/sbin/apache2 -DFOREGROUND

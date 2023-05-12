@@ -1,0 +1,101 @@
+# PHP CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-php/ for more details
+#
+version: 2
+jobs:
+  deploy:
+    environment:
+      - STAGING_DOMAIN=hogehoge.vogaro.jp
+
+    docker:
+    # specify the version you desire here
+      - image: circleci/php:7.1-browsers
+
+    # Specify service dependencies here if necessary
+    # CircleCI maintains a library of pre-built images
+    # documented at https://circleci.com/docs/2.0/circleci-images/
+    # - image: circleci/mysql:9.4
+
+    working_directory: ~/project
+
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "d2:4b:8f:08:d6:2f:dd:ca:eb:12:37:1f:85:b1:86:b5"
+      - attach_workspace:
+          # Must be absolute path or relative path from working_directory
+          at: dist
+
+      - run:
+          name: Git push
+          command: |
+            ssh-keyscan vogaro.jp >> ~/.ssh/known_hosts
+            git config --global user.email "engineer@vogaro.co.jp"
+            git config --global user.name "circleCI"
+            git init
+            git remote add staging ssh://www_invogue@vogaro.jp/home/www_invogue/html/$STAGING_DOMAIN/httpdocs
+            git add .
+            git commit -m "Deploy by CircleCI ${CIRCLE_SHA1}"
+            git push staging master -f
+          working_directory: dist
+
+
+  build:
+    docker:
+      # specify the version you desire here
+      - image: circleci/php:7.1-browsers
+
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+      # - image: circleci/mysql:9.4
+
+    working_directory: ~/project
+
+    steps:
+      - checkout
+
+#    # Download and cache dependencies
+#      - restore_cache:
+#          keys:
+#            - v1-dependencies-{{ checksum "dist/system/composer/composer.json" }}
+#            # fallback to using the latest cache if no exact match is found
+#            - v1-dependencies-
+#
+#      - run:
+#          name: Install composer packages
+#          command: composer install -n --prefer-dist --no-dev
+#          working_directory: dist/system/composer
+#
+#      - save_cache:
+#          paths:
+#            - ./dist/system/composer/vendor
+#          key: v1-dependencies-{{ checksum "dist/system/composer/composer.json" }}
+
+      - persist_to_workspace:
+          # Must be an absolute path, or relative path from working_directory
+          root: dist
+          # Must be relative path from root
+          paths:
+            - .
+
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build-hold:
+          type: approval
+
+      - build:
+          requires:
+            - build-hold
+          filters:
+            branches:
+              only:
+                - master
+                - develop
+
+      - deploy:
+          requires:
+            - build
