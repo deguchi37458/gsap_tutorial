@@ -5,6 +5,15 @@ gsap.registerPlugin(ScrollTrigger)
 
 let secWrapperArray = document.querySelectorAll('.sec-wrapper')
 
+window.addEventListener('load', () => {
+  secWrapperArray.forEach(secWrapper => {
+    gsap.from(secWrapper, {
+      opacity: 0,
+      duration: 0.8
+    })
+  })
+})
+
 secWrapperArray.forEach(secWrapper => {
   gsap.from(secWrapper, {
     scale: 0.8,
