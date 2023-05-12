@@ -13,9 +13,14 @@ let secTitle1bar = document.querySelector('.sec-1 .sec-title .bar')
 window.addEventListener('load', () => {
   gsap
     .timeline({})
-    .to(secTitle1bar, { scaleX: 1, duration: 0.5 })
-    .to(secTitle1bar, { transformOrigin: 'right', scaleX: 0, duration: 0.5 })
-    .to(secTitle1Main, { opacity: 1, duration: 0 }, '-=0.5')
+    .to(secTitle1bar, { ease: 'power3', scaleX: 1, duration: 0.8 })
+    .to(secTitle1bar, {
+      ease: 'power3',
+      transformOrigin: 'right',
+      scaleX: 0,
+      duration: 0.8
+    })
+    .to(secTitle1Main, { opacity: 1, duration: 0 }, '-=0.8')
 })
 
 // sec-2
@@ -25,7 +30,7 @@ gsap.from(secWrapper2, {
   scrollTrigger: {
     trigger: secWrapper2,
     start: 'top bottom',
-    end: 'top 20%',
+    end: 'top top',
     scrub: true,
     markers: true
   }
