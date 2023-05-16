@@ -8,6 +8,7 @@ gsap.registerPlugin(ScrollTrigger)
 // let sec3 = document.querySelector('#sec-3')
 
 // sec-1
+let sec1 = document.querySelector('.sec-1')
 let secTitle1Main = document.querySelector('.sec-1 .sec-title .main')
 let secTitle1bar = document.querySelector('.sec-1 .sec-title .bar')
 window.addEventListener('load', () => {
@@ -21,6 +22,18 @@ window.addEventListener('load', () => {
       duration: 0.6
     })
     .to(secTitle1Main, { opacity: 1, duration: 0 }, '-=0.6')
+})
+
+let secTitle1img = document.querySelector('.sec-1 img')
+gsap.to(secTitle1img, {
+  width: 100 + '%',
+  scrollTrigger: {
+    trigger: sec1,
+    start: 'top top',
+    // end: '+=4000',
+    scrub: true,
+    pin: true
+  }
 })
 
 // sec-2
