@@ -37,14 +37,9 @@ gsap.from(secWrapper2, {
 })
 
 // sec-3
-let secTitle3 = document.querySelector('.sec-3 .sec-title')
-gsap.to(secTitle3, {
-  x: 1200,
-  scrollTrigger: {
-    trigger: secTitle3,
-    start: 'top bottom',
-    end: 'bottom top',
-    scrub: true,
-    markers: true
-  }
+gsap.to('.name-wrap', {
+  xPercent: 100,
+  duration: 10,
+  repeat: -1,
+  ease: 'none'
 })

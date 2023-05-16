@@ -6,4 +6,21 @@
   .sec-title {
     white-space: nowrap;
   }
+
+  .sec-wrapper {
+    position: relative;
+    display: flex;
+    width: 100%;
+
+    .name-wrap {
+      position: relative;
+      width: 100%;
+      white-space: nowrap;
+    }
+
+    .name-wrap-right {
+      position: absolute;
+      right: 100vw;
+    }
+  }
 }
